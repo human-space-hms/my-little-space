@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Little Space for You｜Human Space</title>
+<meta name="description" content="每天留一點時間給自己。An everyday self-awareness ritual by Human Space.">
+<meta property="og:title" content="A Little Space for You｜Human Space">
+<meta property="og:description" content="抽一張卡，留一點時間給自己。An everyday self-awareness ritual.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,500&family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   DESIGN TOKENS — 改顏色、字體、圓角、間距都在這裡
+   ========================================================= */
+:root {
+  /* Brand palette */
+  --brand-sky:    #9EB9D0;
+  --brand-olive:  #494221;
+  --brand-sage:   #A7BF7C;
+  --brand-blue:   #3B78A0;
+  --brand-rose:   #DD8F88;
+  --brand-sun:    #F8BC52;
+  --brand-red:    #D43A28;
+  --brand-cream:  #E7D9C9;
+
+  /* Surfaces & ink */
+  --bg:           #EFE6D8;   /* 書桌背景 */
+  --paper:        #FBF7F0;   /* 紙頁 */
+  --paper-deep:   #F3EBDD;   /* 紙頁上的區塊 */
+  --line:         #E2D6C3;
+  --ink:          #494221;   /* 主要文字 */
+  --ink-soft:     #6F6A55;   /* 英文 / 次要文字 */
+  --ink-faint:    #A39C86;   /* 標籤、頁碼 */
+  --accent:       #D43A28;
+
+  /* 五個心理學維度的顏色 */
+  --cat-self:       #3B78A0;
+  --cat-emotion:    #DD8F88;
+  --cat-compassion: #F8BC52;
+  --cat-flex:       #A7BF7C;
+  --cat-mindful:    #9EB9D0;
+
+  /* 卡背 */
+  --card-back-1:  #494221;
+  --card-back-2:  #5B5330;
+  --card-back-mark: #E7D9C9;
+
+  /* 下載圖片（9:16 桌布）用的顏色 */
+  --img-bg:       #FBF7F0;
+  --img-ink:      #494221;
+  --img-ink-soft: #6F6A55;
+  --img-shape-opacity: 0.5;
+
+  /* Typography */
+  --font-display: "Playfair Display", "Noto Serif TC", Georgia, serif;
+  --font-serif-zh: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang TC", sans-serif;
+
+  /* Shape & spacing */
+  --radius-page: 22px;
+  --radius-card: 18px;
+  --radius-btn:  999px;
+  --page-max:    520px;
+  --gap-xs: 6px;
+  --gap-s:  12px;
+  --gap-m:  20px;
+  --gap-l:  32px;
+  --gap-xl: 48px;
+
+  /* Motion */
+  --turn-ms: 420ms;
+  --flip-ms: 800ms;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+a { color: inherit; }
+.en { font-family: var(--font-display); color: var(--ink-soft); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* 依維度設定 --cat */
+[data-cat="self"]       { --cat: var(--cat-self); }
+[data-cat="emotion"]    { --cat: var(--cat-emotion); }
+[data-cat="compassion"] { --cat: var(--cat-compassion); }
+[data-cat="flex"]       { --cat: var(--cat-flex); }
+[data-cat="mindful"]    { --cat: var(--cat-mindful); }
+
+/* =========================================================
+   BOOK / PAGE
+   ========================================================= */
+.book {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  perspective: 1800px;
+}
+.screen {
+  display: none;
+  position: relative;
+  background: var(--paper);
+  border-radius: 6px var(--radius-page) var(--radius-page) 6px;
+  box-shadow:
+    inset 10px 0 18px -14px rgba(73, 66, 33, .35),   /* 書脊 */
+    0 1px 0 var(--line),
+    0 18px 40px -22px rgba(73, 66, 33, .45);
+  padding: var(--gap-l) 24px var(--gap-l);
+  min-height: calc(100dvh - 40px);
+  flex-direction: column;
+  transform-origin: left center;
+  backface-visibility: hidden;
+}
+.screen.is-active { display: flex; }
+.screen.turn-out { animation: turnOut var(--turn-ms) ease-in forwards; }
+.screen.turn-in  { animation: turnIn  var(--turn-ms) ease-out; }
+@keyframes turnOut {
+  to { transform: rotateY(-75deg); opacity: 0; }
+}
+@keyframes turnIn {
+  from { transform: rotateY(18deg); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.page-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: var(--ink-faint);
+  margin-bottom: var(--gap-l);
+  min-height: 44px;
+}
+.page-head .brand { font-family: var(--font-display); font-style: italic; font-size: 15px; color: var(--ink-soft); }
+.back-btn {
+  border: 0; background: none; padding: 10px 12px 10px 0; min-height: 44px;
+  color: var(--ink-soft); font-size: 14px;
+}
+.page-foot {
+  margin-top: auto; padding-top: var(--gap-l);
+  text-align: center; font-family: var(--font-display); font-style: italic;
+  font-size: 13px; color: var(--ink-faint);
+  letter-spacing: .08em;
+}
+
+/* =========================================================
+   TEXT STYLES
+   ========================================================= */
+.kicker {
+  font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 var(--gap-s);
+}
+.title {
+  font-family: var(--font-display); font-style: italic; font-weight: 500;
+  font-size: clamp(38px, 11vw, 52px); line-height: 1.08; margin: 0 0 var(--gap-s);
+  letter-spacing: -.01em;
+}
+.subtitle { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-soft); margin: 0; }
+.h2 { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 30px; line-height: 1.2; margin: 0 0 var(--gap-m); }
+.zh-lead { font-family: var(--font-serif-zh); font-size: 18px; line-height: 1.85; margin: 0 0 var(--gap-xs); }
+.en-lead { font-size: 16px; line-height: 1.6; margin: 0; }
+.rule { border: 0; border-top: 1px solid var(--line); margin: var(--gap-l) 0; }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 100%; min-height: 58px; padding: 10px 22px;
+  border-radius: var(--radius-btn); border: 1.5px solid var(--ink);
+  background: transparent; line-height: 1.25;
+  transition: transform .15s ease, background .2s ease;
+}
+.btn:active { transform: scale(.98); }
+.btn .zh { font-size: 16px; font-weight: 500; letter-spacing: .06em; }
+.btn .en { font-size: 13px; font-style: italic; color: inherit; opacity: .75; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-ghost { border-color: var(--line); background: var(--paper); }
+.btn-row { display: grid; gap: var(--gap-s); }
+.btn[hidden] { display: none; }
+
+/* =========================================================
+   SCREEN 01 — WELCOME
+   ========================================================= */
+.welcome-hero { margin: var(--gap-l) 0 var(--gap-xl); }
+.welcome-shapes { display: flex; gap: 10px; margin-bottom: var(--gap-l); }
+.welcome-shapes span { width: 22px; height: 22px; border-radius: 50%; background: var(--c); }
+.welcome-shapes span:nth-child(2) { border-radius: 4px; }
+.welcome-shapes span:nth-child(4) { border-radius: 50% 50% 4px 4px; }
+.welcome-meta { font-size: 13px; color: var(--ink-faint); text-align: center; margin: var(--gap-s) 0 0; }
+.mini-disclaimer { font-size: 12px; color: var(--ink-faint); text-align: center; margin: var(--gap-m) 0 0; line-height: 1.6; }
+
+/* =========================================================
+   SCREEN 02 — DRAW
+   ========================================================= */
+.draw-intro { text-align: center; margin-bottom: var(--gap-l); }
+.deck {
+  position: relative; width: min(72vw, 280px); aspect-ratio: 5 / 7.4;
+  margin: 0 auto var(--gap-l);
+  border: 0; padding: 0; background: none;
+  perspective: 1200px;
+}
+.deck-layer {
+  position: absolute; inset: 0; border-radius: var(--radius-card);
+  background: var(--card-back-2);
+  box-shadow: 0 10px 24px -14px rgba(0,0,0,.5);
+}
+.deck-layer.l2 { transform: rotate(-5deg) translate(-6px, 4px); opacity: .55; }
+.deck-layer.l1 { transform: rotate(3deg) translate(5px, 2px); opacity: .8; }
+.deck.is-shuffling .flip-card { animation: shuffle .55s ease-in-out; }
+@keyframes shuffle {
+  25% { transform: translateX(-14px) rotate(-3deg); }
+  60% { transform: translateX(10px) rotate(2deg); }
+}
+.flip-card { position: absolute; inset: 0; display: block; }
+.deck .face, .deck .flip-inner, .front-zh, .front-en, .back-mark b, .back-mark small { display: block; }
+.flip-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--flip-ms) cubic-bezier(.3,.7,.2,1);
+}
+.deck.is-flipped .flip-inner { transform: rotateY(180deg); }
+.deck.no-anim .flip-inner { transition: none; }
+.face {
+  position: absolute; inset: 0; border-radius: var(--radius-card);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+.face.back {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(231,217,201,.12) 34.5% 35.5%, transparent 36%),
+    repeating-linear-gradient(45deg, rgba(231,217,201,.07) 0 2px, transparent 2px 14px),
+    var(--card-back-1);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 14px 30px -16px rgba(0,0,0,.6);
+}
+.face.back::after {
+  content: ""; position: absolute; inset: 10px; border: 1px solid rgba(231,217,201,.35); border-radius: 12px;
+}
+.back-mark { text-align: center; color: var(--card-back-mark); }
+.back-mark b { display: block; font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 34px; line-height: 1; }
+.back-mark small { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; opacity: .7; }
+.face.front {
+  transform: rotateY(180deg);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 26px 22px; text-align: center;
+  box-shadow: 0 14px 30px -16px rgba(0,0,0,.45);
+}
+.face.front::before {
+  content: ""; position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%;
+  background: var(--cat); opacity: .28; left: 15%; top: 22%;
+}
+.face.front > * { position: relative; }
+.front-zh { font-family: var(--font-serif-zh); font-weight: 700; font-size: 21px; line-height: 1.6; margin: var(--gap-m) 0 var(--gap-s); }
+.front-en { font-family: var(--font-display); font-style: italic; font-size: 15px; line-height: 1.45; color: var(--ink-soft); margin: 0; }
+.deck-hint { text-align: center; font-size: 13px; color: var(--ink-faint); margin: -16px 0 var(--gap-m); }
+
+/* Category pill */
+.cat-pill {
+  align-self: center;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; padding: 5px 14px 5px 10px; border-radius: 999px;
+  background: var(--paper-deep); color: var(--ink);
+}
+.cat-pill::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--cat); }
+.cat-pill .en { font-size: 13px; font-style: italic; }
+
+/* =========================================================
+   SCREEN 03 — YOUR CARD
+   ========================================================= */
+.card-sheet {
+  position: relative;
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin-bottom: var(--gap-l);
+}
+.card-sheet-top {
+  background: color-mix(in srgb, var(--cat) 26%, var(--paper));
+  padding: var(--gap-l) 22px var(--gap-l);
+  text-align: center;
+  display: flex; flex-direction: column;
+}
+.card-no { font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--ink-soft); margin-top: var(--gap-s); }
+.msg-zh { font-family: var(--font-serif-zh); font-weight: 700; font-size: 24px; line-height: 1.6; margin: var(--gap-m) 0 var(--gap-s); }
+.msg-en { font-family: var(--font-display); font-style: italic; font-size: 18px; line-height: 1.45; color: var(--ink-soft); margin: 0; }
+.card-section { padding: var(--gap-m) 22px var(--gap-l); }
+.card-section + .card-section { border-top: 1px dashed var(--line); }
+.section-label {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  margin: 0 0 var(--gap-s); font-size: 13px; color: var(--ink-faint); letter-spacing: .08em;
+}
+.section-label .en { font-size: 13px; font-style: italic; color: var(--ink-faint); }
+.section-label::before { content: ""; width: 18px; height: 2px; background: var(--cat); align-self: center; }
+.body-zh { margin: 0 0 var(--gap-s); font-size: 16px; line-height: 1.9; }
+.body-en { margin: 0; font-family: var(--font-display); font-size: 15.5px; line-height: 1.6; color: var(--ink-soft); }
+.question-zh { margin: 0 0 var(--gap-xs); font-family: var(--font-serif-zh); font-weight: 500; font-size: 18px; line-height: 1.75; }
+.question-en { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 16px; line-height: 1.55; color: var(--ink-soft); }
+
+/* =========================================================
+   SCREEN 04 — CLOSING
+   ========================================================= */
+.closing-intro { margin-bottom: var(--gap-l); }
+.closing-intro .zh-lead + .zh-lead { margin-bottom: var(--gap-s); }
+.note-box {
+  background: var(--paper-deep); border-radius: var(--radius-card);
+  padding: var(--gap-m) 18px; margin-bottom: var(--gap-m);
+}
+.note-box[hidden] { display: none; }
+.note-box textarea {
+  width: 100%; min-height: 140px; resize: vertical;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--paper);
+  padding: 14px; font: inherit; font-size: 16px; line-height: 1.7; color: var(--ink);
+}
+.note-box textarea:focus { outline: 2px solid var(--cat, var(--brand-blue)); outline-offset: 1px; }
+.note-privacy { display: flex; gap: 8px; font-size: 12.5px; color: var(--ink-soft); margin: 10px 0 0; line-height: 1.6; }
+.mini-card {
+  display: flex; gap: 12px; align-items: center;
+  border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: var(--gap-m);
+  font-size: 14px; line-height: 1.5;
+}
+.mini-card::before { content: ""; flex: 0 0 12px; height: 12px; border-radius: 50%; background: var(--cat); }
+
+/* Kit email CTA */
+.kit {
+  margin-top: var(--gap-xl);
+  border-radius: var(--radius-card);
+  background: var(--ink); color: var(--paper);
+  padding: var(--gap-l) 22px;
+}
+.kit .h2 { margin-bottom: var(--gap-s); font-size: 26px; }
+.kit p { margin: 0 0 var(--gap-xs); font-size: 15px; }
+.kit .en { color: rgba(251,247,240,.75); font-size: 14.5px; line-height: 1.55; }
+.kit form { display: grid; gap: 10px; margin-top: var(--gap-m); }
+.kit input[type="email"] {
+  min-height: 52px; border-radius: 12px; border: 0; padding: 0 16px;
+  font: inherit; font-size: 16px; background: var(--paper); color: var(--ink);
+}
+.kit .btn { border-color: var(--paper); color: var(--paper); }
+.kit .btn-primary { background: var(--brand-sun); border-color: var(--brand-sun); color: var(--ink); }
+.kit .btn .en { color: inherit; }
+.kit-small { font-size: 12px !important; opacity: .7; margin-top: var(--gap-s) !important; }
+.kit-msg { font-size: 14px; margin-top: 4px; min-height: 1em; }
+
+/* Safety & references */
+.care { margin-top: var(--gap-xl); }
+.care-block {
+  border-left: 3px solid var(--accent);
+  background: var(--paper-deep); border-radius: 0 14px 14px 0;
+  padding: var(--gap-m) 18px; margin-bottom: var(--gap-m);
+}
+.care-block h3, .about h3 { font-family: var(--font-serif-zh); font-size: 17px; margin: 0 0 var(--gap-s); }
+.care-block h3 .en, .about h3 .en { font-size: 15px; font-style: italic; font-weight: 400; }
+.care-block p, .about p { font-size: 14.5px; line-height: 1.8; margin: 0 0 var(--gap-s); }
+.care-block p.en, .about p.en { font-size: 14px; line-height: 1.6; }
+.hotlines { list-style: none; padding: 0; margin: 0 0 var(--gap-s); display: grid; gap: 6px; }
+.hotlines li { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.hotlines a { font-weight: 500; text-decoration: none; white-space: nowrap; }
+details.about {
+  border: 1px solid var(--line); border-radius: 14px; padding: 0 18px; margin-bottom: var(--gap-s);
+}
+details.about summary {
+  list-style: none; cursor: pointer; min-height: 52px; display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; font-weight: 500;
+}
+details.about summary::-webkit-details-marker { display: none; }
+details.about summary::after { content: "+"; font-size: 20px; color: var(--ink-faint); }
+details.about[open] summary::after { content: "–"; }
+details.about[open] { padding-bottom: var(--gap-m); }
+.refs { padding-left: 0; list-style: none; margin: 0; }
+.refs li { font-size: 13px; line-height: 1.6; color: var(--ink-soft); padding: 10px 0; border-top: 1px dashed var(--line); }
+.refs li b { display: block; color: var(--ink); font-weight: 500; font-size: 13.5px; margin-bottom: 2px; }
+.refs cite { font-style: italic; }
+.site-links { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; font-size: 13px; margin-top: var(--gap-l); }
+.site-links a { color: var(--ink-soft); }
+
+/* =========================================================
+   SAVE IMAGE SHEET
+   ========================================================= */
+.sheet {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(40, 36, 18, .72);
+  display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+}
+.sheet[hidden] { display: none; }
+.sheet-panel {
+  width: 100%; max-width: 420px; max-height: 100%; overflow: auto;
+  background: var(--paper); border-radius: var(--radius-page); padding: var(--gap-m);
+  text-align: center;
+}
+.sheet-panel img {
+  display: block; width: auto; max-width: 100%; max-height: 52vh; margin: 0 auto var(--gap-s);
+  border-radius: 12px; box-shadow: 0 10px 24px -14px rgba(0,0,0,.5);
+  -webkit-touch-callout: default; user-select: auto;
+}
+.sheet-tip { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 var(--gap-m); line-height: 1.6; }
+.sheet-loading { padding: var(--gap-xl) 0; color: var(--ink-soft); }
+
+@media (min-width: 700px) {
+  .book { padding-top: 40px; }
+  .screen { padding: var(--gap-xl) 44px; min-height: 760px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .screen.turn-out, .screen.turn-in, .deck.is-shuffling .flip-card { animation: none; }
+  .flip-inner { transition-duration: 1ms; }
+}
+</style>
+</head>
+<body>
+
+<main class="book">
+
+  <!-- ===================== SCREEN 01 · WELCOME ===================== -->
+  <section class="screen is-active" id="s-welcome" aria-labelledby="t-welcome">
+    <div class="page-head">
+      <span class="brand">Human Space</span>
+      <span>01 / 04</span>
+    </div>
+
+    <div class="welcome-hero">
+      <div class="welcome-shapes" aria-hidden="true">
+        <span style="--c: var(--cat-self)"></span>
+        <span style="--c: var(--cat-emotion)"></span>
+        <span style="--c: var(--cat-compassion)"></span>
+        <span style="--c: var(--cat-flex)"></span>
+        <span style="--c: var(--cat-mindful)"></span>
+      </div>
+      <p class="kicker">Daily Card · 每日一張卡</p>
+      <h1 class="title" id="t-welcome">A Little Space for You</h1>
+      <p class="subtitle">An everyday self-awareness ritual.</p>
+      <hr class="rule">
+      <p class="zh-lead">開始今天之前，或結束一天之後，留一點時間給自己。</p>
+      <p class="en en-lead">Before your day begins or comes to an end, take a little moment for yourself.</p>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" data-go="s-draw">
+        <span class="zh">開始抽卡</span><span class="en">Draw a Card</span>
+      </button>
+    </div>
+    <p class="welcome-meta">25 張卡 · 5 個心理學維度 · 約 3 分鐘<br><span class="en">25 cards · 5 dimensions · about 3 minutes</span></p>
+    <p class="mini-disclaimer">本工具僅供日常自我覺察，並非心理測驗或診斷。<br>For everyday self-reflection only. Not a psychological assessment.</p>
+
+    <div class="page-foot">Human-led. AI-enabled. Made for people.</div>
+  </section>
+
+  <!-- ===================== SCREEN 02 · DRAW ===================== -->
+  <section class="screen" id="s-draw" aria-labelledby="t-draw">
+    <div class="page-head">
+      <button type="button" class="back-btn" data-go="s-welcome">← 返回 Back</button>
+      <span>02 / 04</span>
+    </div>
+
+    <div class="draw-intro">
+      <h2 class="h2" id="t-draw">Take a moment.<br>Pick a card.</h2>
+      <p class="zh-lead">深呼吸，放慢一點，抽一張卡看看今天的自己。</p>
+      <p class="en en-lead">Take a breath, slow down, and see what today’s card has for you.</p>
+    </div>
+
+    <button type="button" class="deck" id="deck" aria-label="抽一張卡 Draw a card">
+      <span class="deck-layer l2" aria-hidden="true"></span>
+      <span class="deck-layer l1" aria-hidden="true"></span>
+      <span class="flip-card">
+        <span class="flip-inner">
+          <span class="face back" aria-hidden="true">
+            <span class="back-mark"><b>H·S</b><small>A Little Space</small></span>
+          </span>
+          <span class="face front" id="frontFace" aria-live="polite">
+            <span class="cat-pill" id="frontCat"></span>
+            <span class="front-zh" id="frontZh"></span>
+            <span class="front-en" id="frontEn"></span>
+          </span>
+        </span>
+      </span>
+    </button>
+    <p class="deck-hint" id="deckHint">輕點卡片抽牌 · Tap the deck</p>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="btnDraw">
+        <span class="zh">抽一張卡</span><span class="en">Draw a Card</span>
+      </button>
+      <button type="button" class="btn btn-primary" id="btnRead" hidden data-go="s-card">
+        <span class="zh">翻開完整卡片 →</span><span class="en">Read the full card</span>
+      </button>
+    </div>
+
+    <div class="page-foot">Human Space</div>
+  </section>
+
+  <!-- ===================== SCREEN 03 · YOUR CARD ===================== -->
+  <section class="screen" id="s-card" aria-labelledby="cardZh">
+    <div class="page-head">
+      <button type="button" class="back-btn" data-go="s-draw" data-redraw>← 重新抽卡 Redraw</button>
+      <span>03 / 04</span>
+    </div>
+
+    <article class="card-sheet" id="cardSheet">
+      <header class="card-sheet-top">
+        <span class="cat-pill" id="cardCat"></span>
+        <h2 class="msg-zh" id="cardZh"></h2>
+        <p class="msg-en" id="cardEn"></p>
+        <span class="card-no" id="cardNo"></span>
+      </header>
+
+      <section class="card-section">
+        <p class="section-label">補充說明 <span class="en">A Little Note</span></p>
+        <p class="body-zh" id="noteZh"></p>
+        <p class="body-en" id="noteEn"></p>
+      </section>
+
+      <section class="card-section">
+        <p class="section-label">問問自己 <span class="en">Check in with Yourself</span></p>
+        <p class="question-zh" id="qZh"></p>
+        <p class="question-en" id="qEn"></p>
+      </section>
+    </article>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" data-go="s-closing">
+        <span class="zh">繼續</span><span class="en">Continue</span>
+      </button>
+    </div>
+
+    <div class="page-foot">Human Space</div>
+  </section>
+
+  <!-- ===================== SCREEN 04 · CLOSING ===================== -->
+  <section class="screen" id="s-closing" aria-labelledby="t-closing">
+    <div class="page-head">
+      <button type="button" class="back-btn" data-go="s-card">← 回到卡片 Card</button>
+      <span>04 / 04</span>
+    </div>
+
+    <div class="closing-intro">
+      <h2 class="h2" id="t-closing">A little moment<br>for yourself.</h2>
+      <p class="zh-lead">等等，先別急著離開。</p>
+      <p class="zh-lead">你剛剛讀到的那段話，有沒有讓你想到什麼？</p>
+      <p class="en en-lead">Before you go, take a moment.<br>Did anything in this card make you think or feel something?</p>
+    </div>
+
+    <div class="mini-card" id="miniCard"></div>
+
+    <div class="note-box" id="noteBox" hidden>
+      <label for="noteInput" class="visually-hidden">寫下你的想法 Write a note</label>
+      <textarea id="noteInput" placeholder="寫下你現在的想法或感受……&#10;Write down a thought or feeling…"></textarea>
+      <p class="note-privacy"><span aria-hidden="true">🔒</span><span>筆記只留在這個頁面，不會被上傳或儲存；離開或重新整理後就會消失。<br><span class="en">Your note stays on this page only. It is never uploaded or saved, and disappears when you leave or refresh.</span></span></p>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-ghost" id="btnNote">
+        <span class="zh">記錄感受</span><span class="en">Write a Note</span>
+      </button>
+      <button type="button" class="btn btn-primary" id="btnDownload">
+        <span class="zh">下載卡牌</span><span class="en">Download My Card</span>
+      </button>
+      <button type="button" class="btn" id="btnAgain">
+        <span class="zh">再抽一張</span><span class="en">Draw Another Card</span>
+      </button>
+    </div>
+
+    <!-- ---------- Email CTA (Kit) ---------- -->
+    <section class="kit" aria-labelledby="t-kit">
+      <h3 class="h2" id="t-kit">Stay a little longer.</h3>
+      <p>想收到更多這樣的小練習嗎？留下 Email，我們會不定期寄給你新的心理學小練習、測驗與內容更新。</p>
+      <p class="en">Want more little rituals like this? Leave your email and we’ll send new psychology-inspired exercises, quizzes and updates from time to time.</p>
+      <form id="kitForm" action="https://app.kit.com/forms/9779228/subscriptions" method="post" novalidate>
+        <label for="kitEmail" class="visually-hidden">Email</label>
+        <input type="email" id="kitEmail" name="email_address" placeholder="你的 Email · Your email" autocomplete="email" inputmode="email" required>
+        <button type="submit" class="btn btn-primary" id="kitBtn">
+          <span class="zh">訂閱</span><span class="en">Subscribe</span>
+        </button>
+        <p class="kit-msg" id="kitMsg" role="status"></p>
+      </form>
+      <p class="kit-small">不寄垃圾信，隨時可以取消訂閱。Email 只會在你按下訂閱時傳送給我們的電子報服務 Kit。<br>No spam. Unsubscribe anytime.</p>
+    </section>
+
+    <!-- ---------- Safety & references ---------- -->
+    <section class="care" aria-labelledby="t-care">
+      <div class="care-block">
+        <h3 id="t-care">關於這個練習 <span class="en">About this tool</span></h3>
+        <p>這是一個受正念（Mindfulness）、自我覺察（Self-awareness）、自我慈悲（Self-compassion）與認知彈性（Cognitive Flexibility）等心理學概念啟發的日常自我反思工具。</p>
+        <p>本工具僅供日常自我覺察與個人反思使用，並非經臨床驗證的心理測驗，也不提供心理診斷或治療，無法取代專業心理諮商或醫療服務。</p>
+        <p>每個人都有不同的生活經驗與感受，這裡沒有標準答案。如果某個問題讓你感到不舒服，可以隨時停止練習。</p>
+        <p class="en">This tool is inspired by psychological concepts such as mindfulness, self-awareness, self-compassion, and cognitive flexibility.</p>
+        <p class="en">It is designed for everyday self-reflection. It is not a clinically validated psychological assessment, does not provide diagnosis or treatment, and is not a substitute for professional mental health or medical care.</p>
+        <p class="en">Everyone has different experiences and feelings. There are no right or wrong answers. If any prompt makes you uncomfortable, feel free to stop at any time.</p>
+      </div>
+
+      <details class="about">
+        <summary>心理學參考資料 · References</summary>
+        <ul class="refs">
+          <li><b>認識自己 Self-awareness</b>Duval, S., &amp; Wicklund, R. A. (1972). <cite>A theory of objective self awareness.</cite> Academic Press.<br>Nolen-Hoeksema, S., Wisco, B. E., &amp; Lyubomirsky, S. (2008). Rethinking rumination. <cite>Perspectives on Psychological Science, 3</cite>(5), 400–424.</li>
+          <li><b>理解情緒 Emotional Awareness</b>Lieberman, M. D., et al. (2007). Putting feelings into words: Affect labeling disrupts amygdala activity in response to affective stimuli. <cite>Psychological Science, 18</cite>(5), 421–428.<br>Kashdan, T. B., Barrett, L. F., &amp; McKnight, P. E. (2015). Unpacking emotion differentiation. <cite>Current Directions in Psychological Science, 24</cite>(1), 10–16.<br>Bryant, F. B., &amp; Veroff, J. (2007). <cite>Savoring: A new model of positive experience.</cite> Lawrence Erlbaum.</li>
+          <li><b>善待自己 Self-compassion</b>Neff, K. D. (2003). Self-compassion: An alternative conceptualization of a healthy attitude toward oneself. <cite>Self and Identity, 2</cite>(2), 85–101.</li>
+          <li><b>思考彈性 Cognitive Flexibility</b>Beck, A. T. (1976). <cite>Cognitive therapy and the emotional disorders.</cite> International Universities Press.<br>Kashdan, T. B., &amp; Rottenberg, J. (2010). Psychological flexibility as a fundamental aspect of health. <cite>Clinical Psychology Review, 30</cite>(7), 865–878.</li>
+          <li><b>活在當下 Mindful Living</b>Kabat-Zinn, J. (1990). <cite>Full catastrophe living.</cite> Delacorte.<br>Killingsworth, M. A., &amp; Gilbert, D. T. (2010). A wandering mind is an unhappy mind. <cite>Science, 330</cite>(6006), 932.</li>
+        </ul>
+      </details>
+
+      <nav class="site-links">
+        <a href="https://human-space-hms.github.io/Library/">Human Space Library</a>
+        <a href="https://www.instagram.com/humanspace____/" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+    </section>
+
+    <div class="page-foot">Human-led. AI-enabled. Made for people.</div>
+  </section>
+
+</main>
+
+<!-- ===================== SAVE IMAGE SHEET ===================== -->
+<div class="sheet" id="saveSheet" hidden role="dialog" aria-modal="true" aria-label="下載卡牌 Download card">
+  <div class="sheet-panel">
+    <div class="sheet-loading" id="sheetLoading">正在製作你的卡片… <span class="en">Making your card…</span></div>
+    <img id="sheetImg" alt="你的卡片圖片 Your card image" hidden>
+    <p class="sheet-tip" id="sheetTip" hidden>手機上可以直接<b>長按圖片</b>存到相簿，設成桌布或分享到限時動態。<br><span class="en">On mobile, long-press the image to save it.</span></p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="btnShare" hidden>
+        <span class="zh">分享／存到相簿</span><span class="en">Share or Save</span>
+      </button>
+      <a class="btn" id="btnFile" hidden download>
+        <span class="zh">下載圖片</span><span class="en">Download PNG</span>
+      </a>
+      <button type="button" class="btn btn-ghost" id="btnCloseSheet">
+        <span class="zh">關閉</span><span class="en">Close</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONTENT — 卡牌文字（來源：A_Little_Space_for_You_25_Cards.xlsx）
+   修改卡牌文字只需要改這一段。cat 對應下方 CATEGORIES。
+   ========================================================= */
+const CATEGORIES = {
+  self:       { en: "Self-awareness",        zh: "認識自己" },
+  emotion:    { en: "Emotional Awareness",   zh: "理解情緒" },
+  compassion: { en: "Self-compassion",       zh: "善待自己" },
+  flex:       { en: "Cognitive Flexibility", zh: "思考彈性" },
+  mindful:    { en: "Mindful Living",        zh: "活在當下" }
+};
+
+const CARDS = [
+  { id: 1, cat: "self",
+    message:  { zh: "你不需要把每件小事，都開成一場腦內會議。", en: "You don't have to turn every little thing into a meeting in your head." },
+    note:     { zh: "我們常常不自覺地反覆思考同一件事，試著找出最完美的答案。先留意自己「正在想什麼」，也許就能發現，有些念頭只是習慣性地跑出來，不一定需要立刻處理。", en: "Sometimes we find ourselves going over the same thing again and again, trying to find the perfect answer. Simply noticing what you're thinking may help you see that some thoughts are just familiar patterns—and don't always need your immediate attention." },
+    question: { zh: "最近有什麼事情，是你一直在腦中反覆討論的？", en: "What's something you've been going over in your head lately?" } },
+  { id: 2, cat: "self",
+    message:  { zh: "你可以改變主意，這不代表你沒有原則。", en: "Changing your mind doesn't mean you've lost your principles." },
+    note:     { zh: "我們常常希望自己前後一致，但人的想法本來就會隨著經驗與資訊而改變。願意重新思考，可能代表你正在更了解自己，而不是變得不夠堅定。", en: "We often want to stay consistent, but our thoughts naturally shift as we gain new experiences and information. Being willing to rethink something may mean you're getting to know yourself better, not becoming less certain." },
+    question: { zh: "有沒有一件以前很確定，現在卻開始有不同想法的事？", en: "Is there something you once felt certain about but have started to see differently?" } },
+  { id: 3, cat: "self",
+    message:  { zh: "有時候，你說的「沒關係」真的沒關係嗎？", en: "When you say “it's fine,” is it really fine?" },
+    note:     { zh: "習慣替別人著想，有時會讓我們很快忽略自己的感受。下次想說沒關係之前，可以先停一下，看看自己是否真的能接受。", en: "When you're used to considering other people's feelings, it's easy to overlook your own. The next time you're about to say “it's fine,” pause for a moment and check whether you really feel that way." },
+    question: { zh: "最近有沒有哪件事，你其實有點介意，卻沒有說出來？", en: "Has something been bothering you lately that you haven't said out loud?" } },
+  { id: 4, cat: "self",
+    message:  { zh: "現在的生活，是自己想要的方向嗎？", en: "How much of your life are you choosing for yourself?" },
+    note:     { zh: "有些日常安排是為了工作，有些選擇是因為習慣，也有些是為了符合別人的期待。偶爾回頭看看自己的生活，可以幫助你分辨哪些事情真的重要。", en: "Some parts of your routine are shaped by work, others by habit, and some by other people's expectations. Taking a step back now and then can help you notice which parts of your life truly matter to you." },
+    question: { zh: "最近做過的哪個決定，最能代表你真正想要的生活？", en: "Which recent decision feels most aligned with the life you actually want?" } },
+  { id: 5, cat: "self",
+    message:  { zh: "今天的你，可能跟昨天不太一樣。", en: "Today's you might feel a little different from yesterday's you." },
+    note:     { zh: "睡眠、壓力、環境和生活事件，都可能影響我們的狀態。你不必每天維持相同的效率或心情，先了解今天的自己，再決定接下來適合怎麼度過。", en: "Sleep, stress, your surroundings, and daily events can all shape how you feel. You don't have to bring the same energy or mood every day. Start by noticing where you are today, then decide what kind of day feels right." },
+    question: { zh: "如果今天的自己有一種天氣，會是什麼樣子？", en: "If your mood today were a kind of weather, what would it be?" } },
+  { id: 6, cat: "emotion",
+    message:  { zh: "你說的「煩」，可能藏著好幾種情緒。", en: "There's often more than one feeling hiding behind “I'm annoyed.”" },
+    note:     { zh: "煩躁有時來自疲憊，有時來自失望，也可能是期待落空。試著替感受找到更貼近的名字，你會更容易理解自己正在經歷什麼。", en: "Irritation can come from feeling tired, disappointed, or let down by an expectation. Finding a more precise name for what you're feeling can make it easier to understand what you're going through." },
+    question: { zh: "如果不使用「煩」這個字，你會怎麼形容最近的心情？", en: "If you couldn't use the word “annoyed,” how would you describe how you've been feeling lately?" } },
+  { id: 7, cat: "emotion",
+    message:  { zh: "情緒可以來訪，不必每次都留下來。", en: "Feelings can visit without having to stay." },
+    note:     { zh: "一種情緒出現，不代表它會永遠持續，也不代表它定義了你。你可以先讓它存在，觀察它帶來的感受，再慢慢決定怎麼回應。", en: "A feeling showing up doesn't mean it will last forever, or that it defines who you are. You can let it be there, notice how it feels, and take your time deciding how to respond." },
+    question: { zh: "最近有什麼情緒來得特別頻繁？它通常在什麼時候出現？", en: "Which feeling has been showing up often lately, and when does it tend to appear?" } },
+  { id: 8, cat: "emotion",
+    message:  { zh: "身體有時比嘴巴更早發現你的情緒。", en: "Sometimes your body notices your feelings before you do." },
+    note:     { zh: "肩膀緊繃、胃部不適、呼吸變淺，都可能和壓力或情緒有關，也可能有其他身體原因。留意這些變化，能幫助你更完整地理解當下的狀態。要適當放鬆唷！", en: "Tight shoulders, an unsettled stomach, or shallow breathing can sometimes accompany stress or emotion, though they may have other physical causes too. Noticing these changes can help you build a fuller picture of how you're doing." },
+    question: { zh: "此刻，你的身體哪個部位最容易讓你注意到它的存在？", en: "Which part of your body is most noticeable to you right now?" } },
+  { id: 9, cat: "emotion",
+    message:  { zh: "開心的時候，也值得停下來感受。", en: "Happy moments deserve your attention, too." },
+    note:     { zh: "我們常在不舒服時才開始檢查自己的情緒，卻容易讓愉快的時刻匆匆過去。試著多停留一下，感受讓你開心的細節，也是一種認識自己的方式。", en: "We often check in with ourselves when something feels wrong, while letting joyful moments pass by unnoticed. Staying with a happy moment a little longer—and noticing what makes it meaningful—is another way to understand yourself." },
+    question: { zh: "最近有哪個小小的瞬間，讓你打從心底覺得愉快？", en: "What small moment has genuinely brought you joy lately?" } },
+  { id: 10, cat: "emotion",
+    message:  { zh: "你可以同時有兩種相反的感受。", en: "Two opposite feelings can exist at the same time." },
+    note:     { zh: "期待一件事，也可能同時感到害怕；喜歡一個人，也可能對他感到失望。複雜的感受不需要立刻被整理成單一答案，你可以允許它們同時存在。", en: "You can look forward to something and feel nervous about it, or care about someone and feel disappointed in them. Complex feelings don't have to be reduced to one clear answer. They can coexist." },
+    question: { zh: "最近有沒有一件事，讓你同時感到期待與猶豫？", en: "Is there something lately that has left you feeling both excited and hesitant?" } },
+  { id: 11, cat: "compassion",
+    message:  { zh: "如果朋友犯了同樣的錯，你會怎麼對他說？", en: "What would you say to a friend who made the same mistake?" },
+    note:     { zh: "我們有時對別人很有耐心，對自己卻格外嚴格。試著把給朋友的理解也留一點給自己。犯錯可以讓人懊惱，但不需要因此否定整個自己。", en: "We're sometimes patient with others but especially hard on ourselves. Try offering yourself some of the understanding you'd give a friend. Making a mistake can feel frustrating, but it doesn't have to become a judgment on who you are." },
+    question: { zh: "最近有沒有一件事，你一直在責怪自己？", en: "Is there something you've been blaming yourself for lately?" } },
+  { id: 12, cat: "compassion",
+    message:  { zh: "休息不需要先通過努力程度審核。", en: "You don't need to earn your right to rest." },
+    note:     { zh: "有時候，我們會覺得完成所有事情才能安心休息。可是人的注意力與體力本來就有極限，休息也是照顧生活的一部分，不必等到筋疲力盡才開始。", en: "Sometimes it feels as though we have to finish everything before we're allowed to rest. But our energy and attention have limits. Rest is part of looking after your life, and you don't have to wait until you're completely exhausted." },
+    question: { zh: "如果今天不用證明自己很努力，你會想怎麼安排休息時間？", en: "If you didn't have to prove how hard you've worked today, how would you like to spend your time resting?" } },
+  { id: 13, cat: "compassion",
+    message:  { zh: "你不必每次都表現得很懂事。", en: "You don't always have to be the understanding one." },
+    note:     { zh: "顧慮別人的感受是一種能力，但自己的需求也值得被放進考量。你可以有不同意見，可以感到失望，也可以坦白說出自己希望被怎麼對待。", en: "Being considerate of others is a strength, but your own needs deserve consideration too. You can disagree, feel disappointed, and be honest about how you'd like to be treated." },
+    question: { zh: "最近有沒有哪個時刻，你其實希望別人多理解你一點？", en: "Was there a moment recently when you wished someone had understood you a little better?" } },
+  { id: 14, cat: "compassion",
+    message:  { zh: "今天做得不多，也不代表你不夠好。", en: "A quieter day doesn't make you any less worthy." },
+    note:     { zh: "我們很容易用完成了多少事情來評價自己，但人的價值不需要每天透過成果來證明。有些日子，能好好照顧基本生活，就已經花了不少力氣。", en: "It's easy to measure yourself by how much you get done, but your worth doesn't need to be proven through daily achievements. On some days, taking care of the basics can take plenty of effort." },
+    question: { zh: "你最近是不是用某個標準，對自己要求得太嚴格了？", en: "Have you been holding yourself to an especially strict standard lately?" } },
+  { id: 15, cat: "compassion",
+    message:  { zh: "有些日子，只要先照顧好自己就好。", en: "Some days, looking after yourself is enough." },
+    note:     { zh: "當生活有很多事情同時發生，你可能沒有多餘的心力照顧所有人、完成所有計畫。沒有關係，先看看自己的需要，適度調整期待，也是一種負責任的選擇。", en: "When many things are happening at once, you may not have the capacity to look after everyone or complete every plan. Checking what you need and adjusting your expectations can be a responsible choice, too." },
+    question: { zh: "如果今天可以少承擔一件事，你最想先放下什麼？", en: "If you could take one thing off your plate today, what would you let go of first?" } },
+  { id: 16, cat: "flex",
+    message:  { zh: "事情還沒發生，先別急著演完所有壞結局。", en: "The worst-case scenario doesn't need a full dress rehearsal." },
+    note:     { zh: "面對不確定的事情，大腦有時會自動預演最糟的結果，試著讓自己有所準備。但腦中的想像不等於即將發生的事，你可以先分辨哪些是已知事實，哪些只是擔心。", en: "When something feels uncertain, the mind may rehearse the worst possible outcome in an attempt to prepare. But an imagined scenario isn't a prediction. Try separating what you know from what you're afraid might happen." },
+    question: { zh: "最近有什麼事情，是你還沒遇到，就已經開始擔心結果的？", en: "What have you been worrying about before it has even happened?" } },
+  { id: 17, cat: "flex",
+    message:  { zh: "別人的反應，不一定是關於你的全部故事。", en: "Someone else's reaction may have a story of its own." },
+    note:     { zh: "當別人沒有回訊息、語氣冷淡，或表現得和預期不同，我們很容易直接把原因歸到自己身上。不過，每個人都有自己的生活與狀態，在下結論前，可以先留一點其他可能性。", en: "When someone doesn't reply, sounds distant, or acts unexpectedly, it's easy to assume it must be about us. But everyone has their own life and circumstances. Before drawing a conclusion, leave room for other possibilities." },
+    question: { zh: "最近有沒有哪個人的反應，讓你想了很久？你還能想到其他解釋嗎？", en: "Has someone's reaction been on your mind lately? Can you think of another possible explanation?" } },
+  { id: 18, cat: "flex",
+    message:  { zh: "有些事情，可以先放著，地球不會停止轉動。", en: "Some things can wait. The Earth will keep spinning." },
+    note:     { zh: "我們常常想趕快把問題解決，讓所有事情回到可掌握的狀態。但有些答案需要時間，也有些事情暫時沒有足夠資訊。允許自己晚一點再決定，也是一種選擇。", en: "We often want to solve a problem quickly and get things back under control. But some answers take time, and sometimes we simply don't have enough information yet. Giving yourself permission to decide later is a choice, too." },
+    question: { zh: "現在有沒有一件事，其實可以不用今天就得到答案？", en: "Is there something you don't actually need to figure out today?" } },
+  { id: 19, cat: "flex",
+    message:  { zh: "你看到的，只是事情的一個角度。", en: "What you see is only one perspective." },
+    note:     { zh: "我們習慣從自己的經驗理解世界，這很自然。當一件事讓你感到困惑或不舒服時，不妨試著換個位置看看。新的角度不一定會改變事實，卻可能讓你多理解一些。", en: "We naturally make sense of the world through our own experiences. But when something feels confusing or uncomfortable, try looking at it from another position. A new perspective may not change the facts, but it could help you understand more." },
+    question: { zh: "最近有沒有一件事，如果從別人的角度看，可能會有不同的理解？", en: "Is there something recently that might look different from someone else's point of view?" } },
+  { id: 20, cat: "flex",
+    message:  { zh: "你可以不知道下一步，還是繼續往前生活。", en: "You can keep living without knowing what comes next." },
+    note:     { zh: "不確定未來，有時會讓人很想立刻找到方向。不過，你知道嗎？人生有些階段本來就需要探索，你可以先處理眼前能做的事，不必一次想好接下來的全部。", en: "Not knowing what comes next can make you want to find a direction right away. But some stages of life are meant for exploring. You can focus on what's in front of you without having to map out everything ahead." },
+    question: { zh: "如果暫時不需要決定未來，你現在最想把注意力放在哪裡？", en: "If you didn't have to decide your future just yet, where would you want to place your attention now?" } },
+  { id: 21, cat: "mindful",
+    message:  { zh: "你今天有真正吃到午餐/晚餐的味道嗎？", en: "Did you actually taste your lunch/dinner today?" },
+    note:     { zh: "有時候，我們一邊吃飯、一邊看手機，食物還沒吃完，腦袋已經跑到下一件事。試著放慢一點，留意味道、溫度與口感，讓一件普通的小事重新回到感官裡。", en: "Sometimes we eat while scrolling, and our minds have moved on to the next thing before we've finished our meal. Slow down a little and notice the taste, temperature, and texture. Let an ordinary moment come back to your senses." },
+    question: { zh: "今天有哪個日常片刻，值得你多花一點時間感受？", en: "What everyday moment today would be worth spending a little more time noticing?" } },
+  { id: 22, cat: "mindful",
+    message:  { zh: "你的注意力，也需要偶爾放個假。", en: "Your attention deserves a little time off, too." },
+    note:     { zh: "通知、訊息、影片與各種資訊，隨時都在爭取你的注意力。偶爾放下手機，看看窗外、聽聽環境的聲音，讓注意力從螢幕回到眼前。", en: "Notifications, messages, videos, and endless information are always competing for your attention. Every now and then, put your phone down, look out the window, or listen to the sounds around you. Let your attention return to what's here." },
+    question: { zh: "如果接下來十分鐘沒有任何通知，你想把注意力放在哪裡？", en: "If you had no notifications for the next ten minutes, what would you like to pay attention to?" } },
+  { id: 23, cat: "mindful",
+    message:  { zh: "不必每個空檔，都拿來填滿。", en: "Not every quiet moment needs to be filled." },
+    note:     { zh: "排隊、等車、走路時，我們很習慣拿起手機填補空白。偶爾讓自己什麼都不做，看看周圍的人事物，也許會發現生活裡還有一些平常沒注意到的細節。", en: "When we're waiting in line, catching a ride, or walking, it's easy to reach for our phones to fill the gap. Try doing nothing for a moment and looking around. You might notice details that usually pass you by." },
+    question: { zh: "上一次你只是安靜地待著，沒有急著做其他事情，是什麼時候？", en: "When was the last time you simply sat with a quiet moment without rushing to do something else?" } },
+  { id: 24, cat: "mindful",
+    message:  { zh: "有時候，走慢一點才看得見風景。", en: "Sometimes slowing down is how you notice more." },
+    note:     { zh: "當我們總是趕著抵達下一個地方，很容易忽略正在經過的路。放慢腳步，留意光線、風、街道與周圍的人，讓注意力回到正在發生的生活。", en: "When we're always rushing to get somewhere, it's easy to miss the journey in between. Slow your pace and notice the light, the breeze, the street, and the people around you. Bring your attention back to the life happening right now." },
+    question: { zh: "最近有沒有一個地方，讓你感覺特別放鬆或自在？", en: "Is there a place you've been lately that made you feel especially relaxed or at ease?" } },
+  { id: 25, cat: "mindful",
+    message:  { zh: "此刻的你，需要的是什麼？", en: "What do you need in this moment?" },
+    note:     { zh: "有時候，我們很清楚別人期待自己做什麼，卻不一定知道自己現在需要什麼。也許是一杯水、一點安靜、一場散步，或有人陪你說說話。先留意自己的需要，不必急著給出完美答案。", en: "Sometimes we're clear about what others expect from us, but less sure about what we need ourselves. Maybe it's a glass of water, a little quiet, a walk, or someone to talk to. Start by noticing what you need; there's no perfect answer to find." },
+    question: { zh: "如果現在可以為自己做一件小事，你最想做什麼？", en: "If you could do one small thing for yourself right now, what would it be?" } }
+];
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+const SETTINGS = {
+  imageWidth: 1080,
+  imageHeight: 1920,
+  imageBrand: "Human Space",
+  imageBrandZh: "生活的第三空間",
+  fileNamePrefix: "human-space-card"
+};
+
+/* =========================================================
+   APP
+   ========================================================= */
+const $ = (id) => document.getElementById(id);
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const state = { card: null, bag: [], lastId: null, flipped: false, imageUrl: null };
+
+/* ---------- Page navigation (book page-turn) ---------- */
+function go(targetId) {
+  const current = document.querySelector(".screen.is-active");
+  const next = $(targetId);
+  if (!next || current === next) return;
+  if (targetId === "s-draw") resetDeck();
+  if (targetId === "s-closing") renderMiniCard();
+
+  const show = () => {
+    if (current) current.classList.remove("is-active", "turn-out");
+    next.classList.add("is-active");
+    window.scrollTo(0, 0);
+    if (!reduceMotion) {
+      next.classList.add("turn-in");
+      setTimeout(() => next.classList.remove("turn-in"), 450);
+    }
+  };
+  if (current && !reduceMotion) {
+    current.classList.add("turn-out");
+    setTimeout(show, 400);
+  } else {
+    show();
+  }
+}
+document.querySelectorAll("[data-go]").forEach((el) => {
+  el.addEventListener("click", () => go(el.dataset.go));
+});
+
+/* ---------- Random draw: shuffle bag, no immediate repeats ---------- */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function nextCard() {
+  if (state.bag.length === 0) {
+    state.bag = shuffle(CARDS.map((c) => c.id));
+    // 新一輪的第一張不能和上一張相同
+    const last = state.bag.length - 1;
+    if (state.bag[last] === state.lastId && state.bag.length > 1) {
+      [state.bag[last], state.bag[0]] = [state.bag[0], state.bag[last]];
+    }
+  }
+  const id = state.bag.pop();
+  state.lastId = id;
+  return CARDS.find((c) => c.id === id);
+}
+
+/* ---------- Render helpers (textContent only, no HTML injection) ---------- */
+function setText(id, text) { $(id).textContent = text; }
+function fillPill(el, cat) {
+  el.textContent = "";
+  el.append(CATEGORIES[cat].zh + " ");
+  const en = document.createElement("span");
+  en.className = "en";
+  en.textContent = CATEGORIES[cat].en;
+  el.append(en);
+}
+function setCat(cat) {
+  ["frontFace", "cardSheet", "miniCard", "noteBox"].forEach((id) => $(id).setAttribute("data-cat", cat));
+}
+function renderCard(card) {
+  setCat(card.cat);
+  fillPill($("frontCat"), card.cat);
+  setText("frontZh", card.message.zh);
+  setText("frontEn", card.message.en);
+
+  fillPill($("cardCat"), card.cat);
+  setText("cardZh", card.message.zh);
+  setText("cardEn", card.message.en);
+  setText("cardNo", "No. " + String(card.id).padStart(2, "0"));
+  setText("noteZh", card.note.zh);
+  setText("noteEn", card.note.en);
+  setText("qZh", card.question.zh);
+  setText("qEn", card.question.en);
+}
+function renderMiniCard() {
+  if (!state.card) return;
+  $("miniCard").textContent = state.card.message.zh + "  " + state.card.message.en;
+}
+
+/* ---------- Deck interaction ---------- */
+const deck = $("deck");
+function resetDeck() {
+  deck.classList.add("no-anim");
+  deck.classList.remove("is-flipped");
+  void deck.offsetWidth;
+  deck.classList.remove("no-anim");
+  state.flipped = false;
+  $("btnDraw").hidden = false;
+  $("btnRead").hidden = true;
+  $("deckHint").hidden = false;
+  if (!reduceMotion) {
+    deck.classList.remove("is-shuffling");
+    void deck.offsetWidth;
+    deck.classList.add("is-shuffling");
+  }
+}
+function drawCard() {
+  if (state.flipped) { go("s-card"); return; }
+  state.card = nextCard();
+  renderCard(state.card);
+  $("noteInput").value = "";
+  $("noteBox").hidden = true;
+  deck.classList.remove("is-shuffling");
+  deck.classList.add("is-flipped");
+  state.flipped = true;
+  $("btnDraw").hidden = true;
+  $("btnRead").hidden = false;
+  $("deckHint").hidden = true;
+}
+deck.addEventListener("click", drawCard);
+$("btnDraw").addEventListener("click", drawCard);
+
+/* ---------- Closing actions ---------- */
+$("btnNote").addEventListener("click", () => {
+  $("noteBox").hidden = false;
+  $("noteInput").focus();
+});
+$("btnAgain").addEventListener("click", () => go("s-draw"));
+$("btnDownload").addEventListener("click", openSaveSheet);
+
+/* =========================================================
+   CARD IMAGE (Canvas 9:16)
+   ========================================================= */
+function cssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function fontFamily(name) { return cssVar(name); }
+
+const NO_LINE_START = "，。、？！：；」』）》…—,.!?;:)’”";
+function wrapText(ctx, text, maxWidth, lang) {
+  const tokens = lang === "zh" ? Array.from(text) : text.split(/(\s+)/).filter((t) => t.length);
+  const lines = [];
+  let line = "";
+  for (const tok of tokens) {
+    const test = line + tok;
+    if (ctx.measureText(test).width > maxWidth && line.trim() !== "") {
+      if (lang === "zh" && NO_LINE_START.includes(tok)) { line = test; continue; }
+      lines.push(line.trimEnd());
+      line = /^\s+$/.test(tok) ? "" : tok;
+    } else {
+      line = test;
+    }
+  }
+  if (line.trim()) lines.push(line.trimEnd());
+  return lines;
+}
+// 平衡行長：在不增加行數的前提下縮窄寬度，避免最後一行只剩一兩個字
+function balancedWrap(ctx, text, maxWidth, lang) {
+  const base = wrapText(ctx, text, maxWidth, lang);
+  if (base.length < 2) return base;
+  let best = base;
+  for (let w = maxWidth - 10; w > maxWidth * 0.55; w -= 10) {
+    const trial = wrapText(ctx, text, w, lang);
+    if (trial.length > base.length) break;
+    best = trial;
+  }
+  return best;
+}
+
+async function ensureFonts(card) {
+  if (!document.fonts || !document.fonts.load) return;
+  const all = card.message.zh + card.message.en + CATEGORIES[card.cat].zh + CATEGORIES[card.cat].en + SETTINGS.imageBrand + SETTINGS.imageBrandZh;
+  const loads = [
+    document.fonts.load('700 80px ' + fontFamily("--font-serif-zh"), all),
+    document.fonts.load('italic 400 44px ' + fontFamily("--font-display"), all),
+    document.fonts.load('400 34px ' + fontFamily("--font-sans"), all)
+  ];
+  await Promise.race([Promise.all(loads), new Promise((r) => setTimeout(r, 2500))]).catch(() => {});
+}
+
+async function renderCardImage(card) {
+  await ensureFonts(card);
+  const W = SETTINGS.imageWidth, H = SETTINGS.imageHeight;
+  const canvas = document.createElement("canvas");
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  const ink = cssVar("--img-ink"), inkSoft = cssVar("--img-ink-soft");
+  const catColor = cssVar("--cat-" + card.cat);
+  const serif = fontFamily("--font-serif-zh"), display = fontFamily("--font-display"), sans = fontFamily("--font-sans");
+
+  // Background
+  ctx.fillStyle = cssVar("--img-bg");
+  ctx.fillRect(0, 0, W, H);
+
+  // Decorative shape (category color) — 上方約 1/3 留白給鎖定畫面時鐘
+  const cx = W / 2, cy = 1070, r = 440;
+  ctx.save();
+  ctx.globalAlpha = parseFloat(cssVar("--img-shape-opacity")) || 0.5;
+  ctx.fillStyle = catColor;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+
+  // Measure the whole text block, then center it inside the circle
+  const maxW = 740;
+  ctx.font = "700 68px " + serif;
+  const zhLines = balancedWrap(ctx, card.message.zh, maxW, "zh");
+  ctx.font = "italic 400 40px " + display;
+  const enLines = balancedWrap(ctx, card.message.en, maxW, "en");
+  const catH = 34 + 46, catGap = 84, zhLH = 104, enLH = 58, gap = 40;
+  const blockH = catH + catGap + zhLines.length * zhLH + gap + enLines.length * enLH;
+  let y = cy - blockH / 2 + 34;
+
+  // Category label
+  ctx.fillStyle = ink;
+  ctx.font = "500 34px " + sans;
+  ctx.fillText(CATEGORIES[card.cat].zh, W / 2, y);
+  ctx.fillStyle = inkSoft;
+  ctx.font = "italic 400 30px " + display;
+  ctx.fillText(CATEGORIES[card.cat].en, W / 2, y + 46);
+  y += 46 + catGap + 68;
+
+  ctx.fillStyle = ink;
+  ctx.font = "700 68px " + serif;
+  zhLines.forEach((l) => { ctx.fillText(l, W / 2, y); y += zhLH; });
+  y += gap - zhLH + enLH;
+  ctx.fillStyle = inkSoft;
+  ctx.font = "italic 400 40px " + display;
+  enLines.forEach((l) => { ctx.fillText(l, W / 2, y); y += enLH; });
+
+  // Brand
+  ctx.strokeStyle = inkSoft; ctx.globalAlpha = 0.4; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(W / 2 - 40, 1590); ctx.lineTo(W / 2 + 40, 1590); ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = ink;
+  ctx.font = "italic 500 44px " + display;
+  ctx.fillText(SETTINGS.imageBrand, W / 2, 1660);
+  ctx.fillStyle = inkSoft;
+  ctx.font = "400 28px " + sans;
+  ctx.fillText(SETTINGS.imageBrandZh, W / 2, 1708);
+
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+}
+
+/* ---------- Save sheet: preview + long-press + share + download ---------- */
+let currentFile = null;
+async function openSaveSheet() {
+  if (!state.card) return;
+  const sheet = $("saveSheet");
+  sheet.hidden = false;
+  $("sheetLoading").hidden = false;
+  ["sheetImg", "sheetTip", "btnShare", "btnFile"].forEach((id) => ($(id).hidden = true));
+
+  const blob = await renderCardImage(state.card);
+  if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
+  state.imageUrl = URL.createObjectURL(blob);
+  const name = SETTINGS.fileNamePrefix + "-" + String(state.card.id).padStart(2, "0") + ".png";
+  currentFile = new File([blob], name, { type: "image/png" });
+
+  $("sheetImg").src = state.imageUrl;
+  $("btnFile").href = state.imageUrl;
+  $("btnFile").download = name;
+  $("sheetLoading").hidden = true;
+  $("sheetImg").hidden = false;
+  $("sheetTip").hidden = false;
+  $("btnFile").hidden = false;
+  $("btnShare").hidden = !(navigator.canShare && navigator.canShare({ files: [currentFile] }));
+}
+$("btnShare").addEventListener("click", async () => {
+  try {
+    await navigator.share({ files: [currentFile], title: "A Little Space for You" });
+  } catch (e) { /* 使用者取消分享，不需處理 */ }
+});
+$("btnCloseSheet").addEventListener("click", () => ($("saveSheet").hidden = true));
+$("saveSheet").addEventListener("click", (e) => { if (e.target.id === "saveSheet") $("saveSheet").hidden = true; });
+
+/* =========================================================
+   KIT EMAIL FORM
+   ========================================================= */
+$("kitForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const email = $("kitEmail").value.trim();
+  const msg = $("kitMsg");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    msg.textContent = "請輸入有效的 Email · Please enter a valid email.";
+    return;
+  }
+  $("kitBtn").disabled = true;
+  msg.textContent = "傳送中… Sending…";
+  try {
+    await fetch(form.action, { method: "POST", mode: "no-cors", body: new FormData(form) });
+    msg.textContent = "謝謝你！請到信箱收確認信 ✉︎ Thank you! Please check your inbox to confirm.";
+    form.reset();
+  } catch (err) {
+    // 備援：直接開新分頁送出表單
+    form.target = "_blank";
+    form.submit();
+    msg.textContent = "已在新分頁開啟訂閱確認 · Opened in a new tab.";
+  } finally {
+    $("kitBtn").disabled = false;
+  }
+});
+</script>
+</body>
+</html>
