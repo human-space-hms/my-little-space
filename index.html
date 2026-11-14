@@ -554,9 +554,6 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
           <button type="button" class="btn btn-primary" id="btnDownload">
             <span data-l="zh">下載卡牌</span><span data-l="en">Download My Card</span>
           </button>
-          <button type="button" class="btn" id="btnAgain">
-            <span data-l="zh">再抽一張</span><span data-l="en">Draw Another Card</span>
-          </button>
         </div>
         <button type="button" class="btn" data-go="p-more" style="margin-top: 2.6cqw">
           <span data-l="zh">想收到更多小練習？</span><span data-l="en">Want more little rituals?</span>
@@ -615,7 +612,7 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
         <p class="bookmark" data-l="zh">歡迎把這個連結存起來，<br>每天抽一張卡，感受今天的自己。</p>
         <p class="bookmark" data-l="en">Save this link and come back each day<br>for a card that checks in with you.</p>
         <button type="button" class="btn" id="btnRestart">
-          <span data-l="zh">重新開始</span><span data-l="en">Start Over</span>
+          <span data-l="zh">再抽一張</span><span data-l="en">Draw Another Card</span>
         </button>
         <a class="ig-link" href="https://www.instagram.com/humanspace____/" target="_blank" rel="noopener">Follow us on Instagram</a>
       </div>
@@ -1011,8 +1008,7 @@ window.addEventListener("resize", () => { clearTimeout(fitTimer); fitTimer = set
 
 /* ---------- Actions ---------- */
 $("btnRedraw").addEventListener("click", () => { state.picked = false; go("p-draw"); });
-$("btnAgain").addEventListener("click", () => { state.picked = false; go("p-draw"); });
-$("btnRestart").addEventListener("click", () => { state.picked = false; go("p-welcome"); });
+$("btnRestart").addEventListener("click", () => { state.picked = false; go("p-draw"); });
 $("btnDownload").addEventListener("click", openSaveSheet);
 
 /* =========================================================
@@ -1076,9 +1072,9 @@ function rr(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// 中文標題：遇到「，」「。」就刪掉並換行，只保留「？」
+// 中文標題：遇到「，」「。」就刪掉並換行（「？」「！」保留）
 function splitZhTitle(text) {
-  return text.split(/[，。；！]/).map((s) => s.trim()).filter(Boolean);
+  return text.split(/[，。；]/).map((s) => s.trim()).filter(Boolean);
 }
 // 左對齊、左右對齊（最後一行靠左）
 function drawJustified(ctx, line, x, y, width, lang, isLast) {
