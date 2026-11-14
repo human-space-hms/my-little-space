@@ -274,31 +274,12 @@ html[data-lang="en"] .cover-sub { font-family: var(--font-display); font-style: 
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
 
-/* 卡背 */
+/* 卡背：使用 card-back.png（找不到圖時顯示純色） */
 .face.back {
-  background:
-    radial-gradient(circle, rgba(231,217,201,.16) 1px, transparent 1.4px) 0 0 / 9px 9px,
-    var(--card-back);
-  background-size: 9px 9px, cover; background-position: center;
+  background: var(--card-back) center / cover no-repeat;
+  background-image: url("card-back.png");
   box-shadow: 0 12px 24px -14px rgba(0,0,0,.6);
 }
-.face.back::before { content: ""; position: absolute; inset: 6%; border: 1px solid var(--card-back-line); border-radius: 8px; }
-.face.back.has-image::before, .face.back.has-image::after { display: none; }
-.face.back::after  { content: ""; position: absolute; inset: 8.5%; border: 1px solid var(--card-back-line); border-radius: 6px; }
-.back-art { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--card-back-text); }
-.back-orbit {
-  position: relative; width: 58%; aspect-ratio: 1; border-radius: 50%;
-  border: 1px solid var(--card-back-line);
-  display: flex; align-items: center; justify-content: center;
-}
-.back-orbit::before { content: ""; position: absolute; inset: 14%; border-radius: 50%; border: 1px dashed var(--card-back-line); }
-.back-orbit i {
-  position: absolute; left: 50%; top: 50%; width: 9%; aspect-ratio: 1; border-radius: 50%;
-  background: var(--c);
-  transform: translate(-50%, -50%) rotate(var(--a)) translateY(-9.6cqw);
-}
-.back-title { font-family: var(--font-display); font-style: italic; font-size: 4.4cqw; line-height: 1.05; text-align: center; }
-.back-logo { position: absolute; bottom: 13%; width: 46%; filter: invert(92%) sepia(12%) saturate(300%) hue-rotate(-10deg); opacity: .85; }
 
 /* 卡面（翻開後） */
 .face.front {
@@ -409,7 +390,7 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
 .refs li { font-family: var(--font-serif-en); font-size: max(11.5px, 2.9cqw); line-height: 1.6; color: var(--ink-soft); padding: 2.4cqw 0; border-top: 1px dashed var(--line); }
 .refs li b { display: block; font-family: var(--font-sans); color: var(--ink); font-weight: 500; margin-bottom: 1cqw; }
 .bookmark { text-align: center; font-size: max(13px, 3.3cqw); line-height: 1.6; color: var(--ink-soft); margin: 3cqw 0 2.4cqw; }
-.ig-btn { min-height: 44px; }
+.ig-link { display: block; text-align: center; margin-top: 3cqw; font-size: max(12px, 3cqw); color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; padding: 6px 0; }
 .site-links { display: flex; justify-content: center; gap: 6cqw; font-size: max(12px, 3cqw); margin: 4cqw 0 0; }
 .site-links a { color: var(--ink-soft); }
 
@@ -446,11 +427,20 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
   .note-text { margin-bottom: 4cqw; font-size: 3.7cqw; }
   .card-actions { padding: 4cqw 6cqw 6cqw 7cqw; }
   .mini-card { margin: 3cqw 0; }
-  .kit { padding: 4.4cqw 5cqw; }
-  .kit .h2 { font-size: 6.4cqw; }
-  .kit-form { margin-top: 3cqw; }
-  details.about summary { min-height: 42px; }
+
 }
+
+/* 第 5 頁：內容較多，所有尺寸都用緊湊間距 */
+#p-more .kit { padding: 3.8cqw 5cqw; }
+#p-more .kit .h2 { font-size: 6.2cqw; margin-bottom: 1.6cqw; }
+#p-more .kit p { line-height: 1.55; }
+#p-more .kit-form { margin-top: 2.6cqw; gap: 2cqw; }
+#p-more .kit-form input[type="email"], #p-more .kit-form .btn { min-height: 44px; }
+#p-more details.about summary { min-height: 40px; }
+#p-more .bookmark { margin: 2cqw 0; }
+#btnRestart { min-height: 44px; }
+#p-more .ig-link { margin-top: 1cqw; padding: 4px 0; }
+#p-more .page-inner { padding-bottom: 3cqw; }
 
 @media (prefers-reduced-motion: reduce) {
   .page.turn-out, .page.turn-in, .fan.is-shuffling .pick { animation: none; }
@@ -592,8 +582,8 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
             <button type="submit" class="btn" id="kitBtn"><span data-l="zh">訂閱</span><span data-l="en">Subscribe</span></button>
             <p class="kit-msg" id="kitMsg" role="status"></p>
           </form>
-          <p class="kit-small" data-l="zh">不寄垃圾信，隨時可以取消訂閱。</p>
-          <p class="kit-small" data-l="en">No spam. Unsubscribe anytime.</p>
+          <p class="kit-small" data-l="zh">搶先收到最新消息，可隨時取消訂閱。</p>
+          <p class="kit-small" data-l="en">Be the first to hear what’s new. Unsubscribe anytime.</p>
         </section>
 
         <details class="about">
@@ -624,7 +614,10 @@ details.about p { font-size: max(13px, 3.3cqw); line-height: 1.75; color: var(--
         <div class="grow"></div>
         <p class="bookmark" data-l="zh">歡迎把這個連結存起來，<br>每天抽一張卡，感受今天的自己。</p>
         <p class="bookmark" data-l="en">Save this link and come back each day<br>for a card that checks in with you.</p>
-        <a class="btn ig-btn" href="https://www.instagram.com/humanspace____/" target="_blank" rel="noopener">Follow us on Instagram</a>
+        <button type="button" class="btn" id="btnRestart">
+          <span data-l="zh">重新開始</span><span data-l="en">Start Over</span>
+        </button>
+        <a class="ig-link" href="https://www.instagram.com/humanspace____/" target="_blank" rel="noopener">Follow us on Instagram</a>
       </div>
     </section>
 
@@ -915,13 +908,6 @@ function nextCard() {
 
 /* ---------- Build the fan of 3 cards ---------- */
 const fan = $("fan");
-const ORBIT_COLORS = ["--cat-self", "--cat-emotion", "--cat-compassion", "--cat-flex", "--cat-mindful"];
-function cardBackHTML() {
-  const dots = ORBIT_COLORS.map((c, i) => '<i style="--c: var(' + c + '); --a: ' + (i * 72) + 'deg"></i>').join("");
-  return '<span class="back-art"><span class="back-orbit">' + dots +
-         '<span class="back-title">A Little<br>Space</span></span>' +
-         '<img class="back-logo" src="' + LOGO_SRC + '" alt=""></span>';
-}
 for (let i = 0; i < 3; i++) {
   const b = document.createElement("button");
   b.type = "button";
@@ -929,23 +915,12 @@ for (let i = 0; i < 3; i++) {
   b.setAttribute("aria-label", "Pick card " + (i + 1));
   b.innerHTML =
     '<span class="flip-inner">' +
-      '<span class="face back">' + cardBackHTML() + '</span>' +
+      '<span class="face back"></span>' +
       '<span class="face front" data-cat-target><img class="front-ip" data-ip-front alt="" hidden><span class="cat-pill" data-fill="cat"></span><span class="front-msg" data-fill="messageShort"></span></span>' +
     '</span>';
   b.addEventListener("click", () => pickCard(b));
   fan.appendChild(b);
 }
-// 若有上傳 card-back.png，就用圖片取代 CSS 卡背
-(function () {
-  const probe = new Image();
-  probe.onload = () => fan.querySelectorAll(".face.back").forEach((f) => {
-    f.style.background = 'center / cover no-repeat url("' + SETTINGS.images.cardBack + '")';
-    f.classList.add("has-image");
-    f.querySelector(".back-art").hidden = true;
-  });
-  probe.src = SETTINGS.images.cardBack;
-})();
-
 function resetFan() {
   state.picked = false;
   fan.classList.remove("is-picked");
@@ -986,6 +961,7 @@ function renderCard(card) {
 /* ---------- Actions ---------- */
 $("btnRedraw").addEventListener("click", () => { state.picked = false; go("p-draw"); });
 $("btnAgain").addEventListener("click", () => { state.picked = false; go("p-draw"); });
+$("btnRestart").addEventListener("click", () => { state.picked = false; go("p-welcome"); });
 $("btnDownload").addEventListener("click", openSaveSheet);
 
 /* =========================================================
@@ -1049,6 +1025,23 @@ function rr(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+// 中文標題：遇到「，」「。」就刪掉並換行，只保留「？」
+function splitZhTitle(text) {
+  return text.split(/[，。；！]/).map((s) => s.trim()).filter(Boolean);
+}
+// 左對齊、左右對齊（最後一行靠左）
+function drawJustified(ctx, line, x, y, width, lang, isLast) {
+  ctx.textAlign = "left";
+  const units = lang === "zh" ? Array.from(line) : line.split(" ");
+  if (isLast || units.length < 2) { ctx.fillText(line, x, y); return; }
+  const sep = lang === "zh" ? "" : " ";
+  const textW = units.reduce((s, u) => s + ctx.measureText(u).width, 0);
+  const gap = (width - textW) / (units.length - 1);
+  if (lang === "en" && gap > ctx.measureText(" ").width * 3) { ctx.fillText(line, x, y); return; }
+  let cx = x;
+  units.forEach((u) => { ctx.fillText(u, cx, y); cx += ctx.measureText(u).width + gap; });
+}
+
 async function renderCardImage(card, lang) {
   const isZh = lang === "zh";
   const catName = CATEGORIES[card.cat][lang], msg = card.message[lang], note = card.note[lang];
@@ -1076,7 +1069,9 @@ async function renderCardImage(card, lang) {
     const msgLH = Math.round(msgSize * (isZh ? 1.55 : 1.3));
     const noteLH = Math.round(noteSize * (isZh ? 1.8 : 1.55));
     ctx.font = (isZh ? "700 " + msgSize + "px " + serifZh : "italic 500 " + msgSize + "px " + display);
-    const msgLines = balancedWrap(ctx, msg, maxW - 40, lang);
+    const msgLines = isZh
+      ? splitZhTitle(msg).flatMap((seg) => balancedWrap(ctx, seg, maxW - 40, "zh"))
+      : balancedWrap(ctx, msg, maxW - 40, lang);
     ctx.font = (isZh ? "400 " + noteSize + "px " + sans : "400 " + noteSize + "px " + serifEn);
     const noteLines = wrapText(ctx, note, maxW, lang);
     const total = tagH + gapTag + pillH + gapPill + msgLines.length * msgLH + gapMsg + ruleH + gapRule + noteLines.length * noteLH;
@@ -1122,7 +1117,10 @@ async function renderCardImage(card, lang) {
   // 補充說明
   ctx.fillStyle = inkSoft;
   ctx.font = (isZh ? "400 " + noteSize + "px " + sans : "400 " + noteSize + "px " + serifEn);
-  layout.noteLines.forEach((l) => { y += layout.noteLH; ctx.fillText(l, W / 2, y - layout.noteLH * 0.3); });
+  layout.noteLines.forEach((l, i) => {
+    y += layout.noteLH;
+    drawJustified(ctx, l, A.left, y - layout.noteLH * 0.3, maxW, lang, i === layout.noteLines.length - 1);
+  });
 
   return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
 }
